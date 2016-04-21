@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">YandexTest</string>
+    <string name="title_details_activity">DetailsActivity</string>
+    <plurals name="count_of_albums">
+        <item quantity="one">%d альбом</item>
+        <item quantity="few">%d альбома</item>
+        <item quantity="many">%d альбомов</item>
+        <item quantity="other">%d альбомов</item>
+    </plurals>
+    <plurals name="count_of_tracks">
+        <item quantity="one">%d песня</item>
+        <item quantity="few">%d песни</item>
+        <item quantity="many">%d песен</item>
+        <item quantity="other">%d песен</item>
+    </plurals>
+    <string name="biography">Биография</string>
+</resources>
