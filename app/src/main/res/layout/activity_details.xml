@@ -1,47 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:id="@+id/info_image"
-        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="15dp">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/genres"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="genres"
-            android:layout_gravity="bottom" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="245dp"
+            android:id="@+id/info_image"
+            android:scaleType="centerCrop" />
 
-        <TextView
-            android:id="@+id/albums_and_tracks_qty"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="albums_and_tracks_qty"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/biography"
-            android:layout_marginTop="10dp" />
-
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Текст биографии"
-            android:id="@+id/biography_text"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp" />
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/genres"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="genres"
+                style="@style/text_secondary" />
+
+            <TextView
+                android:id="@+id/albums_and_tracks_qty"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="albums_and_tracks_qty"
+                style="@style/text_secondary"
+                android:layout_marginTop="14dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/biography"
+                style="@style/text_primary_header"
+                android:layout_marginTop="17dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Текст биографии"
+                style="@style/text_primary"
+                android:id="@+id/biography_text"
+                android:layout_marginTop="13dp"/>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>
