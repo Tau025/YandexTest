@@ -1,49 +1,53 @@
 package tau.yandextest;
 
+import android.util.Log;
 import java.util.ArrayList;
+import java.util.List;
 /**
  * Created by TAU on 21.04.2016.
  */
 public class Singer {
+    private static final String LOG_TAG = "Singer";
+
     private int id;
     private String name;
     private String[] genres;
-    private int albumsQty;
-    private int tracksQty;
-    private int imageResourceId;
-    private String biography;
+    private int tracks;
+    private int albums;
+    private String link;
+    private String description;
+    private Cover cover;
 
-    public static ArrayList<Singer> singers = new ArrayList<>();
-    static {
-        singers.add(new Singer(1, "Bonobo", new String[]{"dance", "electronics"}, 8, 95, R.drawable.bonobo,
-                "Simon Green (born 30 March 1976), known by his stage name Bonobo, is a British musician, producer and DJ based in Los Angeles. " +
-                        "Green has recorded and performed solo DJ sets under the name Barakas, and together with Robert Luis " +
-                        "from Tru Thoughts as Nirobi and Barakas."));
-        singers.add(new Singer(2, "Tycho", new String[]{"dance", "electronics"}, 6, 70, R.drawable.tycho,
-                "Tycho (pronounced like Tie-ko, with emphasis on the first syllable) is an American ambient music project " +
-                        "led by Scott Hansen (born 1976 or 1977) as primary composer, songwriter and producer. " +
-                        "Hailing from San Francisco, California, he is known as ISO50 for his photographic and design works."));
-        singers.add(new Singer(3, "Odesza", new String[]{"dance", "electronics"}, 5, 24, R.drawable.odesza,
-                "Odesza (stylized as ODESZA) are an American electronic music duo from Seattle consisting of Harrison Mills " +
-                        "(CatacombKid) and Clayton Knight (BeachesBeaches). The group was formed in 2012 shortly before " +
-                        "Mills and Knight graduated from Western Washington University."));
-        singers.add(new Singer(4, "Ásgeir", new String[]{"dance", "electronics"}, 5, 44, R.drawable.asgeir,
-                "Ásgeir's debut album is Dýrð í dauðaþögn released in 2012, the lead single from which, \"Sumargestur\", " +
-                        "made it to number two on the Tónlist,[3] an unofficial but widely quoted Icelandic Singles Chart, " +
-                        "followed up with the single \"Leyndarmál\"[4] (six weeks at number 1 on Tónlist)[3] and the title track " +
-                        "\"Dýrð í dauðaþögn\" from the album (three weeks at #1 on Tónlist)."));
-    }
+    public static List<Singer> singers = new ArrayList<>();
 
-    public Singer(int id, String name, String[] genres, int albumsQty, int tracksQty, int imageResourceId, String biography) {
+    //setters
+    public void setId(int id) {
         this.id = id;
+    }
+    public void setName(String name) {
         this.name = name;
+    }
+    public void setGenres(String[] genres) {
         this.genres = genres;
-        this.albumsQty = albumsQty;
-        this.tracksQty = tracksQty;
-        this.imageResourceId = imageResourceId;
-        this.biography = biography;
+    }
+    public void setTracks(int tracks) {
+        this.tracks = tracks;
+    }
+    public void setAlbums(int albums) {
+        this.albums = albums;
+    }
+    public void setLink(String link) {
+        this.link = link;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public void setCover(Cover cover) {
+        this.cover = cover;
     }
 
+
+    //getters
     public int getId() {
         return id;
     }
@@ -53,18 +57,22 @@ public class Singer {
     public String[] getGenres() {
         return genres;
     }
-    public int getAlbumsQty() {
-        return albumsQty;
+    public int getTracks() {
+        return tracks;
     }
-    public int getTracksQty() {
-        return tracksQty;
+    public int getAlbums() {
+        return albums;
     }
-    public int getImageResourceId() {
-        return imageResourceId;
+    public String getLink() {
+        return link;
     }
-    public String getBiography() {
-        return biography;
+    public String getDescription() {
+        return description;
     }
+    public Cover getCover() {
+        return cover;
+    }
+
 
     public static Singer getSingerById(int singerId){
         for (Singer singer : singers) {
@@ -75,8 +83,55 @@ public class Singer {
         return null;
     }
 
+    public static void printSingersList() {
+        for (Singer singer : singers) {
+            Log.d(LOG_TAG, "singer: " + singer.toString());
+        }
+    }
+
     @Override
     public String toString() {
-        return name;
+        StringBuilder builder = new StringBuilder();
+        builder.append("id: " + id + " ; ");
+        builder.append("name: " + name + " ; ");
+
+        StringBuilder genresSB = new StringBuilder();
+        String prefix = "";
+        for (String genre : genres) {
+            genresSB.append(prefix);
+            prefix = ", ";
+            genresSB.append(genre);
+        }
+
+        builder.append("genres: " + genresSB.toString() + " ; ");
+        builder.append("tracks: " + tracks + " ; ");
+        builder.append("albums: " + albums + " ; ");
+        builder.append("link: " + link + " ; ");
+        builder.append("description: " + description + " ; ");
+        builder.append("cover.small: " + cover.getSmall() + " ; ");
+        builder.append("cover.big: " + cover.getBig());
+
+        return builder.toString();
+    }
+
+    private class Cover {
+        private String small;
+        private String big;
+
+        //setters
+        public void setSmall(String small) {
+            this.small = small;
+        }
+        public void setBig(String big) {
+            this.big = big;
+        }
+
+        //getters
+        public String getSmall() {
+            return small;
+        }
+        public String getBig() {
+            return big;
+        }
     }
 }

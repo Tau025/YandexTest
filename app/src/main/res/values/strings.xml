@@ -13,5 +13,5 @@
         <item quantity="many">%d песен</item>
         <item quantity="other">%d песен</item>
     </plurals>
-    <string name="biography">Биография</string>
+    <string name="description">Биография</string>
 </resources>

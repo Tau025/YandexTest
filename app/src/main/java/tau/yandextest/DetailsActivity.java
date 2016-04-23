@@ -27,47 +27,48 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         int singerId = getIntent().getIntExtra(EXTRA_ID, 0);
         Singer singer = Singer.getSingerById(singerId);
+        if (singer != null) {
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(singer.getName());
+            }
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null){
-            actionBar.setTitle(singer.getName());
+            Resources res = getResources();
+            Locale locale = res.getConfiguration().locale;
+
+            //prepare ImageView
+//            ImageView iv_infoImage = (ImageView) findViewById(R.id.info_image);
+//            Drawable drawable = ContextCompat.getDrawable(this, singer.getImageResourceId());
+//            iv_infoImage.setImageDrawable(drawable);
+//            iv_infoImage.setContentDescription(singer.getName());
+//            measureScreen();
+//            Log.d(LOG_TAG, "INFO_IMAGE_HEIGHT: " + String.valueOf(INFO_IMAGE_HEIGHT));
+//            iv_infoImage.setLayoutParams(new LinearLayout.LayoutParams(
+//                    LinearLayout.LayoutParams.MATCH_PARENT,
+//                    INFO_IMAGE_HEIGHT
+//            ));
+
+            //prepare TextView for singer genres
+            TextView tv_genres = (TextView) findViewById(R.id.genres);
+            StringBuilder genres = new StringBuilder();
+            String prefix = "";
+            for (String genre : singer.getGenres()) {
+                genres.append(prefix);
+                prefix = ", ";
+                genres.append(genre);
+            }
+            tv_genres.setText(genres);
+
+            //prepare TextView for quantity of singer's albums and tracks
+            TextView tv_albumsAndTracksQty = (TextView) findViewById(R.id.albums_and_tracks_qty);
+            String albums = res.getQuantityString(R.plurals.count_of_albums, singer.getAlbums(), singer.getAlbums());
+            String tracks = res.getQuantityString(R.plurals.count_of_tracks, singer.getTracks(), singer.getTracks());
+            tv_albumsAndTracksQty.setText(String.format(locale, "%s  ·  %s", albums, tracks));
+
+            //prepare TextView for Singer's description
+            TextView tv_biographyText = (TextView) findViewById(R.id.biography_text);
+            tv_biographyText.setText(singer.getDescription());
         }
-
-        Resources res = getResources();
-        Locale locale = res.getConfiguration().locale;
-
-        //prepare ImageView
-        ImageView iv_infoImage = (ImageView) findViewById(R.id.info_image);
-        Drawable drawable = ContextCompat.getDrawable(this, singer.getImageResourceId());
-        iv_infoImage.setImageDrawable(drawable);
-        iv_infoImage.setContentDescription(singer.getName());
-        measureScreen();
-        Log.d(LOG_TAG, "INFO_IMAGE_HEIGHT: " + String.valueOf(INFO_IMAGE_HEIGHT));
-        iv_infoImage.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                INFO_IMAGE_HEIGHT
-        ));
-
-        //prepare TextView for singer genres
-        TextView tv_genres = (TextView) findViewById(R.id.genres);
-        StringBuilder genres = new StringBuilder();
-        String prefix = "";
-        for (String genre : singer.getGenres()) {
-            genres.append(prefix);
-            prefix = ", ";
-            genres.append(genre);
-        }
-        tv_genres.setText(genres);
-
-        //prepare TextView for quantity of singer's albums and tracks
-        TextView tv_albumsAndTracksQty = (TextView) findViewById(R.id.albums_and_tracks_qty);
-        String albums = res.getQuantityString(R.plurals.count_of_albums, singer.getAlbumsQty(), singer.getAlbumsQty());
-        String tracks = res.getQuantityString(R.plurals.count_of_tracks, singer.getTracksQty(), singer.getTracksQty());
-        tv_albumsAndTracksQty.setText(String.format(locale, "%s  ·  %s", albums, tracks));
-
-        //prepare TextView for Singer's biography
-        TextView tv_biographyText = (TextView) findViewById(R.id.biography_text);
-        tv_biographyText.setText(singer.getBiography());
     }
 
     //is used to keep aspect ratio of infoImage
