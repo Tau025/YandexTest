@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * Created by TAU on 21.04.2016.
  */
-public class Singer {
-    private static final String LOG_TAG = "Singer";
+public class Artist {
+    private static final String LOG_TAG = "Artist";
 
     private int id;
     private String name;
@@ -18,7 +18,7 @@ public class Singer {
     private String description;
     private Cover cover;
 
-    public static List<Singer> singers = new ArrayList<>();
+    public static List<Artist> artists = new ArrayList<>();
 
     //setters
     public void setId(int id) {
@@ -74,18 +74,18 @@ public class Singer {
     }
 
 
-    public static Singer getSingerById(int singerId){
-        for (Singer singer : singers) {
-            if (singerId == singer.id){
-                return singer;
+    public static Artist getArtistById(int artistId){
+        for (Artist artist : artists) {
+            if (artistId == artist.id){
+                return artist;
             }
         }
         return null;
     }
 
-    public static void printSingersList() {
-        for (Singer singer : singers) {
-            Log.d(LOG_TAG, "singer: " + singer.toString());
+    public static void printArtistsList() {
+        for (Artist artist : artists) {
+            Log.d(LOG_TAG, "artist: " + artist.toString());
         }
     }
 

@@ -15,11 +15,11 @@ import java.util.Locale;
  * Created by TAU on 21.04.2016.
  */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
-    private List<Singer> singers;
+    private List<Artist> artists;
     private Listener listener;
 
-    public RecyclerViewAdapter(List<Singer> singers) {
-        this.singers = singers;
+    public RecyclerViewAdapter(List<Artist> artists) {
+        this.artists = artists;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -43,22 +43,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         CardView cardView = holder.cardView;
         Resources res = cardView.getContext().getResources();
         Locale locale = res.getConfiguration().locale;
-        Singer singer = singers.get(position);
+        Artist artist = artists.get(position);
 
         ImageView iv_coverSmall = (ImageView) cardView.findViewById(R.id.cover_small);
         Glide.with(cardView.getContext())
-                .load(singers.get(position).getCover().getSmall())
+                .load(artists.get(position).getCover().getSmall())
                 .centerCrop()
                 .crossFade()
                 .into(iv_coverSmall);
 
-        TextView tv_singerName = (TextView) cardView.findViewById(R.id.singer_name);
-        tv_singerName.setText(singer.getName());
+        TextView tv_artistName = (TextView) cardView.findViewById(R.id.artist_name);
+        tv_artistName.setText(artist.getName());
 
         TextView tv_genres = (TextView) cardView.findViewById(R.id.genres);
         StringBuilder genres = new StringBuilder();
         String prefix = "";
-        for (String genre : singer.getGenres()) {
+        for (String genre : artist.getGenres()) {
             genres.append(prefix);
             prefix = ", ";
             genres.append(genre);
@@ -66,15 +66,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         tv_genres.setText(genres);
 
         TextView tv_albumsAndTracksQty = (TextView) cardView.findViewById(R.id.albums_and_tracks_qty);
-        String albums = res.getQuantityString(R.plurals.count_of_albums, singer.getAlbums(), singer.getAlbums());
-        String tracks = res.getQuantityString(R.plurals.count_of_tracks, singer.getTracks(), singer.getTracks());
+        String albums = res.getQuantityString(R.plurals.count_of_albums, artist.getAlbums(), artist.getAlbums());
+        String tracks = res.getQuantityString(R.plurals.count_of_tracks, artist.getTracks(), artist.getTracks());
         tv_albumsAndTracksQty.setText(String.format(locale, "%s, %s", albums, tracks));
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onClick(singers.get(holder.getAdapterPosition()));
+                    listener.onClick(artists.get(holder.getAdapterPosition()));
                 }
             }
         });
@@ -82,7 +82,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount(){
-        return singers.size();
+        return artists.size();
     }
 
     public void setListener(Listener listener){
@@ -90,6 +90,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public interface Listener {
-        void onClick(Singer selectedSinger);
+        void onClick(Artist selectedArtist);
     }
 }

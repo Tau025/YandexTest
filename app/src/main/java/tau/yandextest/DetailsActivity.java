@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 public class DetailsActivity extends AppCompatActivity {
     public static final String EXTRA_ID = "extra_id";
     private static final String LOG_TAG = "DetailsActivity";
-    private Singer singer;
+    private Artist artist;
     private Bitmap image;
     private int coverBigWidth = 0;
     private int coverBigHeight = 0;
@@ -40,12 +40,12 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        int singerId = getIntent().getIntExtra(EXTRA_ID, 0);
-        singer = Singer.getSingerById(singerId);
-        if (singer != null) {
+        int artistId = getIntent().getIntExtra(EXTRA_ID, 0);
+        artist = Artist.getArtistById(artistId);
+        if (artist != null) {
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
-                actionBar.setTitle(singer.getName());
+                actionBar.setTitle(artist.getName());
             }
 
             //подготовим ImageView
@@ -57,7 +57,7 @@ public class DetailsActivity extends AppCompatActivity {
             TextView tv_genres = (TextView) findViewById(R.id.genres);
             StringBuilder genres = new StringBuilder();
             String prefix = "";
-            for (String genre : singer.getGenres()) {
+            for (String genre : artist.getGenres()) {
                 genres.append(prefix);
                 prefix = ", ";
                 genres.append(genre);
@@ -67,13 +67,13 @@ public class DetailsActivity extends AppCompatActivity {
             //подготовим TextView для количества альбомов и треков
             TextView tv_albumsAndTracksQty = (TextView) findViewById(R.id.albums_and_tracks_qty);
             Resources res = getResources();
-            String albums = res.getQuantityString(R.plurals.count_of_albums, singer.getAlbums(), singer.getAlbums());
-            String tracks = res.getQuantityString(R.plurals.count_of_tracks, singer.getTracks(), singer.getTracks());
+            String albums = res.getQuantityString(R.plurals.count_of_albums, artist.getAlbums(), artist.getAlbums());
+            String tracks = res.getQuantityString(R.plurals.count_of_tracks, artist.getTracks(), artist.getTracks());
             tv_albumsAndTracksQty.setText(String.format(res.getConfiguration().locale, "%s  ·  %s", albums, tracks));
 
             //подготовим TextView для биографии
             TextView tv_biographyText = (TextView) findViewById(R.id.biography_text);
-            tv_biographyText.setText(singer.getDescription());
+            tv_biographyText.setText(artist.getDescription());
         }
     }
 
@@ -97,7 +97,7 @@ public class DetailsActivity extends AppCompatActivity {
             //делаем запрос на сервер чтобы получить размеры Cover.big
             try {
                 image = Glide.with(getApplicationContext())
-                        .load(singer.getCover().getBig())
+                        .load(artist.getCover().getBig())
                         .asBitmap()
                         .into(-1, -1)
                         .get();
@@ -125,7 +125,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 
                     //выводим анимацию только если размеры картинки нам еще не известны
-                    if (!singer.getCover().isBigCoverDownloaded()) {
+                    if (!artist.getCover().isBigCoverDownloaded()) {
                         //строка ниже необходима чтобы ScrollView пересчитал высоту контейнера, внутри которого происходит анимация
                         moveableLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, metrics.heightPixels));
                         animate(iv_coverBig, moveableLayout, 1000, 0, coverBigHeight, 0f, 1f);
@@ -136,12 +136,12 @@ public class DetailsActivity extends AppCompatActivity {
 
                         //повторный вызов with с тем же URL не создаст новую загрузку, а будет использовать кэшированную копию картинки
                         Glide.with(iv_coverBig.getContext())
-                                .load(singer.getCover().getBig())
+                                .load(artist.getCover().getBig())
                                 .centerCrop()
                                 .crossFade()
                                 .into(iv_coverBig);
                     }
-                    singer.getCover().setBigCoverDownloaded(true);
+                    artist.getCover().setBigCoverDownloaded(true);
                 }
                 Log.d(LOG_TAG, "coverBig w*h: " + String.valueOf(coverBigWidth) + "*" + String.valueOf(coverBigHeight));
             } else {
@@ -181,7 +181,7 @@ public class DetailsActivity extends AppCompatActivity {
 
                 //повторный вызов with с тем же URL не создаст новую загрузку, а будет использовать кэшированную копию картинки
                 Glide.with(scalableView.getContext())
-                        .load(singer.getCover().getBig())
+                        .load(artist.getCover().getBig())
                         .centerCrop()
                         .crossFade()
                         .into(scalableView);

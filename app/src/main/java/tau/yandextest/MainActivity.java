@@ -69,15 +69,15 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         YandexTestAPI yandexTestClient = retrofit.create(YandexTestAPI.class);
 
-        Callback<List<Singer>> callback = new Callback<List<Singer>>() {
+        Callback<List<Artist>> callback = new Callback<List<Artist>>() {
             @Override
-            public void onResponse (Call<List<Singer>> call, Response<List<Singer>> response){
+            public void onResponse (Call<List<Artist>> call, Response<List<Artist>> response){
                 if (response.isSuccessful()) {
                     //получен ответ от сервера об успехе. обработаем полученный результат
                     Log.d(LOG_TAG, "retrofit response isSuccessful");
-                    List<Singer> singersResponse = response.body();
+                    List<Artist> artistsResponse = response.body();
                     progressBar.dismiss();
-                    handleSuccess(singersResponse);
+                    handleSuccess(artistsResponse);
                 } else {
                     //ответ пришел, но говорит об ошибке
                     int errorCode = response.code();
@@ -90,31 +90,31 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure (Call<List<Singer>> call, Throwable t){
+            public void onFailure (Call<List<Artist>> call, Throwable t){
                 Log.d(LOG_TAG, "retrofit failure: " + t.getLocalizedMessage());
                 Log.d(LOG_TAG, "check API_BASE_URL and internet connection");
                 progressBar.dismiss();
                 handleFailure(t.getLocalizedMessage());
             }
         };
-        Call<List<Singer>> call = yandexTestClient.executeRequest();
+        Call<List<Artist>> call = yandexTestClient.executeRequest();
         call.enqueue(callback);
     }
 
-    private void handleSuccess(List<Singer> singersResponse){
+    private void handleSuccess(List<Artist> artistsResponse){
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-//        Singer.printSingersList();
-        Singer.singers = singersResponse;
-        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(Singer.singers);
+//        Artist.printArtistsList();
+        Artist.artists = artistsResponse;
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(Artist.artists);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
 
         adapter.setListener(new RecyclerViewAdapter.Listener() {
             @Override
-            public void onClick(Singer selectedSinger) {
+            public void onClick(Artist selectedArtist) {
                 Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
-                intent.putExtra(DetailsActivity.EXTRA_ID, selectedSinger.getId());
+                intent.putExtra(DetailsActivity.EXTRA_ID, selectedArtist.getId());
                 startActivity(intent);
             }
         });
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         //Base URL: always ends with /
         //@Url: DO NOT start with /
         @GET(API_PRECISE_URL)
-        Call<List<Singer>> executeRequest();
+        Call<List<Artist>> executeRequest();
     }
 
     private boolean setRotationAnimation() {
