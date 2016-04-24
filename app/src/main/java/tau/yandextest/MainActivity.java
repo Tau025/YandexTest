@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -104,8 +105,9 @@ public class MainActivity extends AppCompatActivity {
     private void handleSuccess(List<Artist> artistsResponse){
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 //        Artist.printArtistsList();
-        Artist.artists = artistsResponse;
-        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(Artist.artists);
+        Artist.artistList = artistsResponse;
+        Collections.sort(Artist.artistList);
+        final RecyclerViewAdapter adapter = new RecyclerViewAdapter(Artist.artistList);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);

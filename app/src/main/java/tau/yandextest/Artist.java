@@ -1,12 +1,13 @@
 package tau.yandextest;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 /**
  * Created by TAU on 21.04.2016.
  */
-public class Artist {
+public class Artist implements Comparable{
     private static final String LOG_TAG = "Artist";
 
     private int id;
@@ -18,7 +19,7 @@ public class Artist {
     private String description;
     private Cover cover;
 
-    public static List<Artist> artists = new ArrayList<>();
+    public static List<Artist> artistList = new ArrayList<>();
 
     //setters
     public void setId(int id) {
@@ -75,7 +76,7 @@ public class Artist {
 
 
     public static Artist getArtistById(int artistId){
-        for (Artist artist : artists) {
+        for (Artist artist : artistList) {
             if (artistId == artist.id){
                 return artist;
             }
@@ -83,8 +84,13 @@ public class Artist {
         return null;
     }
 
+    @Override
+    public int compareTo(@NonNull Object another) {
+        return this.name.compareTo(((Artist) another).name);
+    }
+
     public static void printArtistsList() {
-        for (Artist artist : artists) {
+        for (Artist artist : artistList) {
             Log.d(LOG_TAG, "artist: " + artist.toString());
         }
     }
