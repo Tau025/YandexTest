@@ -31,10 +31,10 @@ import okhttp3.ResponseBody;
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "MainActivity";
 
-    //API_BASE_URL always ends with /
+    //API_BASE_URL всегда завершается /
     private static final String API_BASE_URL = "http://download.cdn.yandex.net/";
-    //API_PRECISE_URL do not start with /
-    private static final String API_PRECISE_URL = "mobilization-2016/artists.json";
+    //URL_ENDPOINT не начинается с /
+    private static final String URL_ENDPOINT = "mobilization-2016/artists.json";
 
     private Dialog progressBar;
 
@@ -49,14 +49,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Dialog createProgressBar(Context mContext){
-        //avoid passing getApplicationContext() as a parameter. pass "this" from activity instead
-        Dialog pd = new Dialog(mContext);
+        //не следует передавать getApplicationContext() как параметр. вместо этого используйте "this" при вызове из активити
+        Dialog dialog = new Dialog(mContext);
         View view = LayoutInflater.from(mContext).inflate(R.layout.progress_bar, null);
-        pd.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        pd.getWindow().setBackgroundDrawableResource(R.color.colorTransparent);
-        pd.setContentView(view);
-        pd.show();
-        return pd;
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawableResource(R.color.colorTransparent);
+        dialog.setContentView(view);
+        return dialog;
     }
 
     private void sendRequest() {
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     //ответ пришел, но говорит об ошибке
                     int errorCode = response.code();
                     Log.d(LOG_TAG, "retrofit response is not successful. errorCode: " + String.valueOf(errorCode));
-                    Log.d(LOG_TAG, "check API_PRECISE_URL and executeRequest parameters if any");
+                    Log.d(LOG_TAG, "check URL_ENDPOINT and executeRequest parameters if any");
                     ResponseBody errorBody = response.errorBody();
                     progressBar.dismiss();
                     handleError(errorBody);
@@ -99,14 +98,15 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         Call<List<Artist>> call = yandexTestClient.executeRequest();
+        //запрос можно выполнять синхронно методом execute(), или асинхронно методом enqueue()
         call.enqueue(callback);
     }
 
     private void handleSuccess(List<Artist> artistsResponse){
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-//        Artist.printArtistsList();
+        //сохраним полученный лист, отсортируем его и передадим адаптеру
         Artist.artistList = artistsResponse;
         Collections.sort(Artist.artistList);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         final RecyclerViewAdapter adapter = new RecyclerViewAdapter(Artist.artistList);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.setListener(new RecyclerViewAdapter.Listener() {
             @Override
             public void onClick(Artist selectedArtist) {
+                //при тапе на элементе запустим новую активность, передав в неё id выбранного артиста
                 Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
                 intent.putExtra(DetailsActivity.EXTRA_ID, selectedArtist.getId());
                 startActivity(intent);
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     interface YandexTestAPI {
         //Base URL: always ends with /
         //@Url: DO NOT start with /
-        @GET(API_PRECISE_URL)
+        @GET(URL_ENDPOINT)
         Call<List<Artist>> executeRequest();
     }
 

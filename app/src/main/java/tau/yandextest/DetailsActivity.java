@@ -28,7 +28,6 @@ public class DetailsActivity extends AppCompatActivity {
     public static final String EXTRA_ID = "extra_id";
     private static final String LOG_TAG = "DetailsActivity";
     private Artist artist;
-    private Bitmap image;
     private int coverBigWidth = 0;
     private int coverBigHeight = 0;
     private ImageView iv_coverBig;
@@ -42,7 +41,9 @@ public class DetailsActivity extends AppCompatActivity {
 
         int artistId = getIntent().getIntExtra(EXTRA_ID, 0);
         artist = Artist.getArtistById(artistId);
+        //обрабатывать вью-элементы этой ативности нужно только если получен корректный артист, к которому относится эта активность
         if (artist != null) {
+            //установим заголовок окна
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.setTitle(artist.getName());
@@ -87,6 +88,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 
     class LoadGlideImageTask extends AsyncTask<Void, Void, Boolean> {
+        private Bitmap bitmap;
         @Override
         protected void onPreExecute() {
         }
@@ -94,14 +96,21 @@ public class DetailsActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             Log.d(LOG_TAG, "started LoadGlideImageTask");
-            //делаем запрос на сервер чтобы получить размеры Cover.big
+            //делаем запрос на сервер, так как размеры Cover.big могут быть разными, а мы не хотим обрезать картинку
             try {
-                image = Glide.with(getApplicationContext())
+                bitmap = Glide.with(getApplicationContext())
                         .load(artist.getCover().getBig())
                         .asBitmap()
                         .into(-1, -1)
                         .get();
-            } catch (final ExecutionException | InterruptedException e) {
+            } catch (ExecutionException e) {
+                if (e.getMessage() != null) {
+                    Log.d(LOG_TAG, e.getMessage());
+                } else {
+                    Log.d(LOG_TAG, "ExecutionException occurred. Check concurrency");
+                }
+                return false;
+            } catch (InterruptedException e) {
                 Log.d(LOG_TAG, e.getMessage());
                 return false;
             }
@@ -112,10 +121,10 @@ public class DetailsActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean success) {
             if (success){
                 Log.d(LOG_TAG, "picture load success");
-                if (image != null) {
+                if (bitmap != null) {
                     //получим размеры загруженной картинки и сохраним ее пропорции вписав в ширину экрана
-                    int imageWidth = image.getWidth();
-                    int imageHeight = image.getHeight();
+                    int imageWidth = bitmap.getWidth();
+                    int imageHeight = bitmap.getHeight();
                     Log.d(LOG_TAG, "image from server w*h: " + String.valueOf(imageWidth) + "*" + String.valueOf(imageHeight));
 
                     DisplayMetrics metrics = new DisplayMetrics();
@@ -147,51 +156,60 @@ public class DetailsActivity extends AppCompatActivity {
             } else {
                 Log.d(LOG_TAG, "picture load failed");
                 Toast.makeText(DetailsActivity.this, getResources().getText(R.string.picture_load_failed_msg), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void animate(final ImageView scalableView, final View moveableView,
-                         int duration, int fromYDelta, int toYDelta,
-                         float fromTransparency, final float toTransparency) {
-        final int scalableViewHeight = scalableView.getHeight() + toYDelta - fromYDelta;
-
-        ObjectAnimator mover = ObjectAnimator.ofFloat(moveableView, "translationY", (float) fromYDelta, (float) toYDelta);
-        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(moveableView, "alpha", fromTransparency, toTransparency);
-        animatorSet = new AnimatorSet();
-        animatorSet.play(mover).with(fadeIn);
-        animatorSet.setDuration(duration);
-        animatorSet.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-                Log.d(LOG_TAG, "onAnimationStart");
-            }
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                Log.d(LOG_TAG, "onAnimationEnd");
-
-                //необходимо для корректного завершения анимации перемещения
-                animator = ObjectAnimator.ofFloat(moveableView, "translationY", 0.0f, 0.0f);
-                animator.setDuration(1);
-                animator.start();
-
-                scalableView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, scalableViewHeight));
-                moveableView.setAlpha(toTransparency);
-                moveableView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+                //если картинка не загрузилась, используем анимацию перехода по умолчанию и показываем только текстовые поля
+                moveableLayout.setAlpha(1f);
 
                 //повторный вызов with с тем же URL не создаст новую загрузку, а будет использовать кэшированную копию картинки
-                Glide.with(scalableView.getContext())
+                Glide.with(iv_coverBig.getContext())
                         .load(artist.getCover().getBig())
                         .centerCrop()
                         .crossFade()
-                        .into(scalableView);
+                        .into(iv_coverBig);
             }
+        }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                Log.d(LOG_TAG, "onAnimationCancel");
-            }
-        });
-        animatorSet.start();
+        private void animate(final ImageView scalableView, final View moveableView,
+                             int duration, int fromYDelta, int toYDelta,
+                             float fromTransparency, final float toTransparency) {
+            final int scalableViewHeight = scalableView.getHeight() + toYDelta - fromYDelta;
+
+            ObjectAnimator mover = ObjectAnimator.ofFloat(moveableView, "translationY", (float) fromYDelta, (float) toYDelta);
+            ObjectAnimator fadeIn = ObjectAnimator.ofFloat(moveableView, "alpha", fromTransparency, toTransparency);
+            animatorSet = new AnimatorSet();
+            animatorSet.play(mover).with(fadeIn);
+            animatorSet.setDuration(duration);
+            animatorSet.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+                    Log.d(LOG_TAG, "onAnimationStart");
+                }
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    Log.d(LOG_TAG, "onAnimationEnd");
+
+                    //необходимо для корректного завершения анимации перемещения
+                    animator = ObjectAnimator.ofFloat(moveableView, "translationY", 0.0f, 0.0f);
+                    animator.setDuration(1);
+                    animator.start();
+
+                    scalableView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, scalableViewHeight));
+                    moveableView.setAlpha(toTransparency);
+                    moveableView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
+                    //повторный вызов with с тем же URL не создаст новую загрузку, а будет использовать кэшированную копию картинки
+                    Glide.with(scalableView.getContext())
+                            .load(artist.getCover().getBig())
+                            .centerCrop()
+                            .crossFade()
+                            .into(scalableView);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    Log.d(LOG_TAG, "onAnimationCancel");
+                }
+            });
+            animatorSet.start();
+        }
     }
 }

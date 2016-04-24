@@ -1,7 +1,6 @@
 package tau.yandextest;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -87,12 +86,6 @@ public class Artist implements Comparable{
     @Override
     public int compareTo(@NonNull Object another) {
         return this.name.compareTo(((Artist) another).name);
-    }
-
-    public static void printArtistsList() {
-        for (Artist artist : artistList) {
-            Log.d(LOG_TAG, "artist: " + artist.toString());
-        }
     }
 
     @Override
