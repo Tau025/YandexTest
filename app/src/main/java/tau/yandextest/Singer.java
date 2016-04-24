@@ -114,9 +114,10 @@ public class Singer {
         return builder.toString();
     }
 
-    private class Cover {
+    public class Cover {
         private String small;
         private String big;
+        private boolean bigCoverDownloaded;
 
         //setters
         public void setSmall(String small) {
@@ -125,6 +126,9 @@ public class Singer {
         public void setBig(String big) {
             this.big = big;
         }
+        public void setBigCoverDownloaded(boolean wasDownloaded) {
+            this.bigCoverDownloaded = wasDownloaded;
+        }
 
         //getters
         public String getSmall() {
@@ -132,6 +136,9 @@ public class Singer {
         }
         public String getBig() {
             return big;
+        }
+        public boolean isBigCoverDownloaded() {
+            return bigCoverDownloaded;
         }
     }
 }

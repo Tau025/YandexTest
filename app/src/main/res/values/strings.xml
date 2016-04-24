@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">YandexTest</string>
     <string name="title_details_activity">DetailsActivity</string>
+    <string name="picture_load_failed_msg">picture load failed</string>
+
     <plurals name="count_of_albums">
         <item quantity="one">%d альбом</item>
         <item quantity="few">%d альбома</item>

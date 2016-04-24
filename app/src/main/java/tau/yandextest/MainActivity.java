@@ -3,6 +3,7 @@ package tau.yandextest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 import java.io.IOException;
 import java.util.List;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar = createProgressBar(this);
         sendRequest();
+//        setRotationAnimation();
     }
 
     private Dialog createProgressBar(Context mContext){
@@ -133,5 +137,19 @@ public class MainActivity extends AppCompatActivity {
         //@Url: DO NOT start with /
         @GET(API_PRECISE_URL)
         Call<List<Singer>> executeRequest();
+    }
+
+    private boolean setRotationAnimation() {
+        if (Build.VERSION.SDK_INT < 18) {
+            return false;
+        }
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        win.setAttributes(winParams);
+
+        winParams.rotationAnimation = LayoutParams.ROTATION_ANIMATION_CROSSFADE;
+        win.setAttributes(winParams);
+        return true;
     }
 }

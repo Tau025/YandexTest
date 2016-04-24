@@ -1,8 +1,6 @@
 package tau.yandextest;
 
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 import java.util.List;
 import java.util.Locale;
 /**
@@ -46,10 +45,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Locale locale = res.getConfiguration().locale;
         Singer singer = singers.get(position);
 
-//        ImageView imageView = (ImageView) cardView.findViewById(R.id.info_image);
-//        Drawable drawable = ContextCompat.getDrawable(cardView.getContext(), singer.getCover().getBig());
-//        imageView.setImageDrawable(drawable);
-//        imageView.setContentDescription(singer.getName());
+        ImageView iv_coverSmall = (ImageView) cardView.findViewById(R.id.cover_small);
+        Glide.with(cardView.getContext())
+                .load(singers.get(position).getCover().getSmall())
+                .centerCrop()
+                .crossFade()
+                .into(iv_coverSmall);
 
         TextView tv_singerName = (TextView) cardView.findViewById(R.id.singer_name);
         tv_singerName.setText(singer.getName());
