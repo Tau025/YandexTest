@@ -26,7 +26,6 @@ import java.util.concurrent.ExecutionException;
  */
 public class DetailsActivity extends AppCompatActivity {
     public static final String EXTRA_ID = "extra_id";
-    private static final String LOG_TAG = "DetailsActivity";
     private Artist artist;
     private int coverBigWidth = 0;
     private int coverBigHeight = 0;
@@ -41,10 +40,11 @@ public class DetailsActivity extends AppCompatActivity {
 
         int artistId = getIntent().getIntExtra(EXTRA_ID, 0);
         artist = Artist.getArtistById(artistId);
+        Log.d(Constants.LOG_TAG, "artist: " + String.valueOf(artist));
         //обрабатывать вью-элементы этой ативности нужно только если получен корректный артист, к которому относится эта активность
+        ActionBar actionBar = getSupportActionBar();
         if (artist != null) {
             //установим заголовок окна
-            ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.setTitle(artist.getName());
             }
@@ -75,6 +75,11 @@ public class DetailsActivity extends AppCompatActivity {
             //подготовим TextView для биографии
             TextView tv_biographyText = (TextView) findViewById(R.id.biography_text);
             tv_biographyText.setText(artist.getDescription());
+        } else {
+            if (actionBar != null) {
+                actionBar.setTitle(R.string.artist_load_failed_msg);
+                Toast.makeText(getApplicationContext(), R.string.artist_load_failed_msg, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -95,7 +100,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            Log.d(LOG_TAG, "started LoadGlideImageTask");
+            Log.d(Constants.LOG_TAG, "started LoadGlideImageTask");
             //делаем запрос на сервер, так как размеры Cover.big могут быть разными, а мы не хотим обрезать картинку
             try {
                 bitmap = Glide.with(getApplicationContext())
@@ -105,13 +110,13 @@ public class DetailsActivity extends AppCompatActivity {
                         .get();
             } catch (ExecutionException e) {
                 if (e.getMessage() != null) {
-                    Log.d(LOG_TAG, e.getMessage());
+                    Log.d(Constants.LOG_TAG, e.getMessage());
                 } else {
-                    Log.d(LOG_TAG, "ExecutionException occurred. Check concurrency");
+                    Log.d(Constants.LOG_TAG, "ExecutionException occurred. Check concurrency");
                 }
                 return false;
             } catch (InterruptedException e) {
-                Log.d(LOG_TAG, e.getMessage());
+                Log.d(Constants.LOG_TAG, e.getMessage());
                 return false;
             }
             return true;
@@ -120,12 +125,12 @@ public class DetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean success) {
             if (success){
-                Log.d(LOG_TAG, "picture load success");
+                Log.d(Constants.LOG_TAG, "picture load success");
                 if (bitmap != null) {
                     //получим размеры загруженной картинки и сохраним ее пропорции вписав в ширину экрана
                     int imageWidth = bitmap.getWidth();
                     int imageHeight = bitmap.getHeight();
-                    Log.d(LOG_TAG, "image from server w*h: " + String.valueOf(imageWidth) + "*" + String.valueOf(imageHeight));
+                    Log.d(Constants.LOG_TAG, "image from server w*h: " + String.valueOf(imageWidth) + "*" + String.valueOf(imageHeight));
 
                     DisplayMetrics metrics = new DisplayMetrics();
                     getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -137,7 +142,7 @@ public class DetailsActivity extends AppCompatActivity {
                     if (!artist.getCover().isBigCoverDownloaded()) {
                         //строка ниже необходима чтобы ScrollView пересчитал высоту контейнера, внутри которого происходит анимация
                         moveableLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, metrics.heightPixels));
-                        animate(iv_coverBig, moveableLayout, 1000, 0, coverBigHeight, 0f, 1f);
+                        animate(iv_coverBig, moveableLayout, 400, 0, coverBigHeight, 0f, 1f);
                     } else {
                         //если мы уже загрузили картинку раньше, используем анимацию перехода по умолчанию
                         iv_coverBig.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, coverBigHeight));
@@ -152,9 +157,9 @@ public class DetailsActivity extends AppCompatActivity {
                     }
                     artist.getCover().setBigCoverDownloaded(true);
                 }
-                Log.d(LOG_TAG, "coverBig w*h: " + String.valueOf(coverBigWidth) + "*" + String.valueOf(coverBigHeight));
+                Log.d(Constants.LOG_TAG, "coverBig w*h: " + String.valueOf(coverBigWidth) + "*" + String.valueOf(coverBigHeight));
             } else {
-                Log.d(LOG_TAG, "picture load failed");
+                Log.d(Constants.LOG_TAG, "picture load failed");
                 Toast.makeText(DetailsActivity.this, getResources().getText(R.string.picture_load_failed_msg), Toast.LENGTH_SHORT).show();
                 //если картинка не загрузилась, используем анимацию перехода по умолчанию и показываем только текстовые поля
                 moveableLayout.setAlpha(1f);
@@ -181,11 +186,11 @@ public class DetailsActivity extends AppCompatActivity {
             animatorSet.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animator) {
-                    Log.d(LOG_TAG, "onAnimationStart");
+                    Log.d(Constants.LOG_TAG, "onAnimationStart");
                 }
                 @Override
                 public void onAnimationEnd(Animator animator) {
-                    Log.d(LOG_TAG, "onAnimationEnd");
+                    Log.d(Constants.LOG_TAG, "onAnimationEnd");
 
                     //необходимо для корректного завершения анимации перемещения
                     animator = ObjectAnimator.ofFloat(moveableView, "translationY", 0.0f, 0.0f);
@@ -206,7 +211,7 @@ public class DetailsActivity extends AppCompatActivity {
 
                 @Override
                 public void onAnimationCancel(Animator animation) {
-                    Log.d(LOG_TAG, "onAnimationCancel");
+                    Log.d(Constants.LOG_TAG, "onAnimationCancel");
                 }
             });
             animatorSet.start();

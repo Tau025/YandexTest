@@ -90,10 +90,6 @@ public class Artist implements Comparable{
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("id: " + id + " ; ");
-        builder.append("name: " + name + " ; ");
-
         StringBuilder genresSB = new StringBuilder();
         String prefix = "";
         for (String genre : genres) {
@@ -102,42 +98,8 @@ public class Artist implements Comparable{
             genresSB.append(genre);
         }
 
-        builder.append("genres: " + genresSB.toString() + " ; ");
-        builder.append("tracks: " + tracks + " ; ");
-        builder.append("albums: " + albums + " ; ");
-        builder.append("link: " + link + " ; ");
-        builder.append("description: " + description + " ; ");
-        builder.append("cover.small: " + cover.getSmall() + " ; ");
-        builder.append("cover.big: " + cover.getBig());
-
-        return builder.toString();
-    }
-
-    public class Cover {
-        private String small;
-        private String big;
-        private boolean bigCoverDownloaded;
-
-        //setters
-        public void setSmall(String small) {
-            this.small = small;
-        }
-        public void setBig(String big) {
-            this.big = big;
-        }
-        public void setBigCoverDownloaded(boolean wasDownloaded) {
-            this.bigCoverDownloaded = wasDownloaded;
-        }
-
-        //getters
-        public String getSmall() {
-            return small;
-        }
-        public String getBig() {
-            return big;
-        }
-        public boolean isBigCoverDownloaded() {
-            return bigCoverDownloaded;
-        }
+        return String.format("id: %s; name: %s; genres: %s; tracks: %s; albums: %s; link: %s; " +
+                "description: %s; cover.small: %s; cover.big: %s;",
+                id, name, genresSB.toString(), tracks, albums, link, description, cover.getSmall(), cover.getBig());
     }
 }
